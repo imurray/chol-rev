@@ -1,0 +1,31 @@
+!    -*- f90 -*-
+! Note: the context of this file is case sensitive.
+
+python module larmpack ! in 
+    interface  ! in :larmpack
+        subroutine dpofrt(uplo,n,a,lda,c,ldc,info) ! in :larmpack:../dpofrt.f
+            character :: uplo
+            integer :: n
+            double precision dimension(lda,*) :: a
+            integer, optional,check(shape(a,0)==lda),depend(a) :: lda=shape(a,0)
+            double precision dimension(ldc,*),intent(inplace) :: c
+            integer, optional,check(shape(c,0)==ldc),depend(c) :: ldc=shape(c,0)
+            integer intent(inplace) :: info
+        end subroutine dpofrt
+        subroutine dpo2ft(uplo,n,a,lda,c,ldc,info) ! in :larmpack:../dpo2ft.f
+            character :: uplo
+            integer :: n
+            double precision dimension(lda,*) :: a
+            integer, optional,check(shape(a,0)==lda),depend(a) :: lda=shape(a,0)
+            double precision dimension(ldc,*),intent(inplace) :: c
+            integer, optional,check(shape(c,0)==ldc),depend(c) :: ldc=shape(c,0)
+            integer intent(inplace) :: info
+        end subroutine dpo2ft
+    end interface 
+end python module larmpack
+
+! This file was initially auto-generated with f2py (version:2).
+! See http://cens.ioc.ee/projects/f2py2e/
+! The command run was:
+! f2py -m larmpack ../dpofrt.f ../dpo2ft.f -h larmpack.pyf
+! Then "intent(inplace)" was added to four places above.
