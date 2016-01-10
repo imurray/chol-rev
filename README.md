@@ -65,7 +65,7 @@ block matrix operations like LAPACK routines do, so is comparatively slow.
 
 
 This code is deliberately archaic
-=================================
+---------------------------------
 
 LAPACK sticks to FORTRAN 77 and 6-letter function names. For the moment,
 we've been masochistic and done the same. The last two or three letters of

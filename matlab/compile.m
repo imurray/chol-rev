@@ -8,9 +8,20 @@ opts = {};
 if exist('octave_config_info')
     % Octave
     link_opts = {'-llapack', '-lblas'};
+    if ismac
+        link_opts = {'-Wl,-framework,Accelerate', link_opts{:}};
+    end
 else
     % Matlab
-    link_opts = {'-lmwlapack', '-lmwblas'};
+    if ispc
+        lapacklib = fullfile(matlabroot, 'extern', 'lib', computer('arch'), ...
+                'microsoft', 'libmwlapack.lib');
+        blaslib = fullfile(matlabroot, 'extern', 'lib', computer('arch'), ...
+                'microsoft', 'libmwblas.lib');
+        link_opts = {lapacklib, blaslib};
+    else
+        link_opts = {'-lmwlapack', '-lmwblas'};
+    end
     if blas_64bit_ints
         opts = {'-largeArrayDims'};
     end

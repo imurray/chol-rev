@@ -13,9 +13,9 @@ On my machine I can run:
 A small error is reported (e.g., `1e-8` or smaller), indicating the routine
 is working properly.
 
-You need f2py (which comes with numpy these days), and the ability to
+You need f2py (which comes with NumPy these days), and the ability to
 compile Fortran and C, including BLAS and LAPACK routines as used by your
-install of numpy+scipy. (Although see the caveat in compile.py -- things
+install of NumPy+SciPy. (Although see the caveat in compile.py -- things
 sometimes manage to work if you don't have complete LAPACK libraries.)
 
 
