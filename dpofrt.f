@@ -91,11 +91,11 @@
       EXTERNAL           LSAME, ILAENV
 *     ..
 *     .. External Subroutines ..
-      EXTERNAL           DCOPY, DSCAL, DGEMM, DPO2FT, DSYRK, DTRSM
+      EXTERNAL           DCOPY, DSCAL, DGEMM, DPO2FT, DTRSM
       EXTERNAL           XERBLA
 *     ..
 *     .. Intrinsic Functions ..
-      INTRINSIC          MAX, MIN
+      INTRINSIC          MAX
 *     ..
 *     .. Executable Statements ..
 *

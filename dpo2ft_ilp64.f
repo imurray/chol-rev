@@ -85,9 +85,9 @@
       DOUBLE PRECISION   AJJ
 *     ..
 *     .. External Functions ..
-      LOGICAL            LSAME, DISNAN
+      LOGICAL            LSAME
       DOUBLE PRECISION   DDOT
-      EXTERNAL           LSAME, DDOT, DISNAN
+      EXTERNAL           LSAME, DDOT
 *     ..
 *     .. External Subroutines ..
       EXTERNAL           DGEMV, DSCAL, XERBLA, DGER
