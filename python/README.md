@@ -1,17 +1,25 @@
 Python Cholesky Reverse
 =======================
 
-This is a first attempt at providing a routine to push derivatives through
-a Cholesky decomposition in Python. It uses the Fortran routines from the
-parent directory; see the README.md there for more information.
+This is a first attempt at providing a Python routine to push derivatives
+backwards through the Cholesky decomposition. See the README.md in the parent
+directory for more information, and also the Matlab/Octave version which is
+currently better documented.
 
 On my machine I can run:
 ```
     python compile.py
     python chol_rev_demo.py
 ```
-A small error is reported (e.g., `1e-8` or smaller), indicating the routine
-is working properly.
+A small error is reported (e.g., `1e-8` or smaller), indicating that the
+routine is working properly.
+
+If you omit the compilation step, it should still work, but you'll be
+warned that the core `chol_rev` routine will probably be slower.
+
+The fast compiled version uses the Fortran routines from the parent
+directory; see the README.md there both for more information about the
+Fortran code and for the general idea.
 
 You need f2py (which comes with NumPy these days), and the ability to
 compile Fortran and C, including BLAS and LAPACK routines as used by your

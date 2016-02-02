@@ -29,7 +29,9 @@ routine for Matlab/Octave, call it, and check consistency. The matlab
 directory has a toy Gaussian process demo, to show how the new routines
 could be used within a larger gradient computation. There is also a slow
 Matlab version of the Fortran code, which may be easier to read than the
-Fortran for anyone wishing to port the algorithm.
+Fortran for anyone wishing to port the algorithm. There are also simpler
+pure Matlab and Python routines to achieve the same result, but more
+slowly.
 
 What follows is a high level description of how this routine could be used
 in general:
