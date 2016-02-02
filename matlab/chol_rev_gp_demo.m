@@ -34,11 +34,10 @@ function [F, ell_bar] = f_ell_grad(ell, sigma_n, xx, yy)
 % Compute F, the -ve log probability of labels yy under a Gaussian determined by
 % the other arguments. Also return derivatives ell_bar = dF/d_ell, found by
 % back-propagating through the computation involving the Cholesky decomposition.
-N = size(xx, 2);
 [K, obj] = kernel_fwd(xx, ell);
 L = chol(plus_diag(K, sigma_n), 'lower');
 ww = L\yy;
-F = 0.5*ww'*ww + sum(log(diag(L)));
+F = 0.5*(ww'*ww) + sum(log(diag(L)));
 % Backpropagation starts here:
 L_bar = -tril((L'\ww)*ww');
 L_bar = plus_diag(L_bar, 1./diag(L));
