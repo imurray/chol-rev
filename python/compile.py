@@ -1,15 +1,28 @@
 #!/usr/bin/env python
 
-import os, os.path
+import subprocess, os.path
 
-cmd = 'f2py -c -m larmpack larmpack.pyf'
-cmd += ' ' + os.path.join('..', 'dpofrt.f')
-cmd += ' ' + os.path.join('..', 'dpo2ft.f')
-val = os.system(cmd + ' --link-lapack_opt')
+# In Anaconda with python3, f2py3 was available and f2py was not.
+# On Ubuntu 14.04, I saw that f2py2.7 and f2py3.4 were available.
+# Try to find most specific f2py version:
+import sys, distutils.spawn
+full_ver = "%d.%d" % sys.version_info[:2]
+f2py = distutils.spawn.find_executable('f2py' + full_ver)
+if not f2py:
+    ver = str(sys.version_info[0])
+    f2py = distutils.spawn.find_executable('f2py' + ver)
+    if not f2py:
+        f2py = 'f2py'
+
+cmd = [f2py, '-c', '-m', 'larmpack', 'larmpack.pyf',
+        os.path.join('..', 'dpofrt.f'), os.path.join('..', 'dpo2ft.f'),
+        '--link-lapack_opt']
+val = subprocess.call(cmd)
 if val != 0:
-    # Anaconda's commercial "accelerate" numpy+scipy package uses Intel's MKL,
+    # Anaconda can be configured to use Intel's commercial MKL library,
     # but doesn't ship with a complete LAPACK library. However, its "BLAS"
     # libraries have all of the LAPACK routines we need in them, so try
     # asking just for those if compilation failed.
-    val = os.system(cmd + ' --link-blas_opt')
+    cmd[-1] = '--link-blas_opt'
+    val = subprocess.call(cmd)
 
