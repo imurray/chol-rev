@@ -1,51 +1,49 @@
-Cholesky Reverse
-================
+Differentiating the Cholesky decomposition
+==========================================
 
-This mini project provides a routine that let's you differentiate
-expressions involving Cholesky decompositions, using 'reverse-mode
-differentiation' or 'backpropagation'.
+To find out about the different ways to differentiate expressions or code
+containing a Cholesky decomposition, please see the companion
+[overview on arXiv](http://arxiv.org/abs/1602.07527).
 
-The LAPACK FORTRAN 77 code `dpotrf.f` implements the Cholesky decomposition
-using blocked level-3 BLAS routines so it's fast. This implementation is
-widely used, such as by Matlab/Octave, R, and SciPy. The file `dpofrt.f` in
-this repository is a new companion routine, which takes derivatives with
-respect to a Cholesky decomposition from `dpotrf.f` and replaces them with
-derivatives with respect to elements of the original positive definite
-input matrix.
+This directory contains a reverse-mode routine written in FORTRAN 77,
+modeled after the fast LAPACK Cholesky routine `DPOTRF`, which uses blocked
+level-3 BLAS routines. LAPACK's implementation is widely used, such as by
+NumPy, Octave, and R. The file `dpofrt.f` in this repository is a new
+companion routine, which takes derivatives with respect to a Cholesky
+decomposition from `dpotrf.f` and replaces them with derivatives with
+respect to elements of the original positive definite input matrix.
 
-If you wish to use BLAS and LAPACK binaries that use 64-bit indexes, make sure
-to use the relevant compiler flag (possibly `-fdefault-integer-8` or `-i8`), or
-use the derived file `dpotrf_ilp64.f`. See `make_ilp64.sh` for more details.
-It's important to check the size of integers used by BLAS and LAPACK: they are
-traditionally 32-bit even on 64-bit machines, but builds with 64-bit integers
-are becoming more common.
+The Python and Matlab directories show how to link this Fortran code,
+but also provide pure Octave/Matlab and Python versions, that are still
+reasonably fast. The Matlab directory has a simple Gaussian Process demo,
+also warning how many GP codes are inefficient.
 
 
-How it can be used
-------------------
+How to use the derivative routine
+---------------------------------
 
 The matlab and python sub-directories demonstrate how to compile this
 routine for Matlab/Octave, call it, and check consistency. The matlab
 directory has a toy Gaussian process demo, to show how the new routines
-could be used within a larger gradient computation. There is also a slow
-Matlab version of the Fortran code, which may be easier to read than the
-Fortran for anyone wishing to port the algorithm. There are also simpler
-pure Matlab and Python routines to achieve the same result, but more
-slowly.
+could be used within a larger gradient computation. The Matlab and Python
+directories also include native implementataions. The Python is probably
+the easiest to read, and also implements all of the forward- and
+reverse-mode updates discussed in the [note on arXiv](http://arxiv.org/abs/1602.07527).
 
-What follows is a high level description of how this routine could be used
-in general:
+What follows is a high level description of how a reverse-mode routine
+could be used in general, although see also the [overview on
+arXiv](http://arxiv.org/abs/1602.07527).
 
-Assume you wish to differentiate a scalar function `f(chol(A(W)))` with
-respect to an array of input values `W`. `A` is positive-definite matrix
+Assume you wish to differentiate a scalar function `f(chol(A(x)))` with
+respect to a vector of input values `x`. `A` is positive-definite matrix
 that depends on the inputs, and `L = chol(A)` is its lower-diagonal
 Cholesky decomposition. If you can compute derivatives `L_bar = df/dL`, the
 code provided here will convert them into `A_bar = df/dA`. These
 derivatives should in turn be passed on to reverse-mode/backpropagation
-code that can compute `W_bar = df/dW`, the final required result.
+code that can compute `x_bar = df/dx`, the final required result.
 
-(NB don't compute the 4-dimensional array with elements `dA_{ij}/dW_{kl}`
--- use backpropagation to compute `df/dW_{kl}` from `A_bar = df/dA` without
+(NB don't compute the 3-dimensional array with elements `dA_{ij}/dx_k`
+-- use backpropagation to compute `df/dx_k` from `A_bar = df/dA` without
 producing large intermediate objects! A lot of Gaussian process code in the
 wild does create large intermediate objects, or has inefficient loops that
 forward propagate some of the gradient computation. The demo in the Matlab
@@ -65,9 +63,16 @@ Giles provides pseudo-code and simple Matlab code for pushing derivatives
 through the Cholesky decomposition. However, this algorithm doesn't use
 block matrix operations like LAPACK routines do, so is comparatively slow.
 
+Tools that can do reverse-mode differentiation of the Cholesky (some faster
+than others), include:
+- [AutoGrad](https://github.com/HIPS/autograd). Can differentiate multiple times.
+- [GPFlow](https://github.com/GPflow/GPflow)
+- [Stan](http://mc-stan.org/)
+- [Theano](http://deeplearning.net/software/theano/)
 
-This code is deliberately archaic
----------------------------------
+
+More details on the horrible FORTRAN
+------------------------------------
 
 LAPACK sticks to FORTRAN 77 and 6-letter function names. For the moment,
 we've been masochistic and done the same. The last two or three letters of
@@ -78,10 +83,20 @@ The idea is that lots of projects already use LAPACK. If our routines are
 just like those, in principle it should be possible to build them with
 existing tool-chains for many use cases. However, many people use binary
 releases of LAPACK, and working out how to compile new routines against
-BLAS and LAPACK is not easy for everyone. In the long term, hopefully the
-importance of performant reverse mode primitives will become more widely
-appreciated. Then routines like this one might ship pre-compiled with
-binary distributions of projects like Octave and SciPy.
+BLAS and LAPACK is not easy for everyone. One option is to try to get
+routines like the one in this directory shipped pre-compiled with binary
+distributions of projects like Octave and SciPy. Another option is to
+reimplement the routines in other languages. The Python version, the
+pseudo-code in the [arXiv note](http://arxiv.org/abs/1602.07527), or the
+Matlab version may be easier to read than the FORTRAN.
+
+If you are using the FORTRAN, it's important to check the size of integers
+used by BLAS and LAPACK: they are traditionally 32-bit even on 64-bit
+machines, but builds with 64-bit integers are becoming more common. If your
+BLAS and LAPACK binaries use 64-bit indexes, make sure to use the relevant
+compiler flag (possibly `-fdefault-integer-8` or `-i8`), or use the derived
+files `dpotrf_ilp64.f` and `dpo2ft_ilp64.f`. See `make_ilp64.sh` for more
+details. 
 
 
 Status and open issues

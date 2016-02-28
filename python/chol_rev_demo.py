@@ -3,7 +3,7 @@ from numpy.random import randn
 from numpy.random import standard_normal as randnt
 from numpy.linalg import cholesky as chol
 
-from linalg_rev import chol_rev
+import chol_diff
 
 # Example setup:
 N = 500
@@ -12,7 +12,7 @@ L = chol(A)               # lower-triangular Cholesky decomposition
 Lbar = np.tril(randnt(L.shape)) # declare what dF/dL is for some function F
 
 # Push the derivative back through the Cholesky, Abar = dF/d(tril(A))
-Abar = chol_rev(L, Lbar)
+Abar = chol_diff.chol_rev(L, Lbar)
 
 # Perturb the input, look at the perturbation of the output and check
 # for consistency.
@@ -22,4 +22,9 @@ dL = (chol(A + (eps/2)*dA) - chol(A - (eps/2)*dA)) / eps
 dF1 = np.dot(dL.ravel(), Lbar.ravel())
 dF2 = np.dot(dA.ravel(), Abar.ravel())
 
+if chol_diff.FORTRAN_COMPILED:
+    print('Using Fortran version:')
+else:
+    print('Using pure Python version:')
 print('Error: %g' % float(dF1 - dF2))
+
