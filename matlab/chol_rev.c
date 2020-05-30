@@ -8,11 +8,7 @@
 #else
 /*  Otherwise the following should work on most current systems. */
 #   ifndef int64_t
-#       ifdef _WIN32
-#           define int64_t LONGLONG
-#       else
-#           define int64_t long long
-#       endif
+#       define int64_t long long
 #   endif
 #   ifndef int32_t
 #       define int32_t int
@@ -27,7 +23,7 @@
 
 /* fix for systems known not to do fortran name-mangling */
 #if defined(_WIN32) || defined(__hpux)
-#   define dpofrt_ dpofrt
+#   define dpofrt_ DPOFRT
 #endif
 
 extern void dpofrt_(
